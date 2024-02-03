@@ -1,4 +1,3 @@
-#flying spaceship Project
 import pygame
 from Stone import Stone
 from Star import Star
@@ -40,7 +39,6 @@ def createStone(star,arr,points,level10):
         if(abs(k.stoneX-star.star_x)>40 and abs(k.stoneY-star.star_y)>40):
             created==True
             i+=1
-            print(len(arr), points ,created)
             if(level10):
                 return add_stone(k.stoneX,0,arr)
             else:
@@ -157,22 +155,25 @@ class Main:
                         pic = pygame.image.load(r"stone.png").convert_alpha()
                         screen.blit(pic, (stone.stoneX, stone.stoneY))
                     
-                #If the SpaceShip is on Star
+                
                 if(captured):
                     star = Star(arr)
                     captured=False
                     points+=1
                 if(points == 18):
                     print("VICTORY")
-                #Check if Crashed
-                if(stoneBool or level10):
+                if(stoneBool):
                     if is_crashed(x,y,arr,points):
+                        movement=False
+                        Xvelocity=0
+                        yVelocity=0
+                if(level10):
+                    if is_crashed(x,y,arr1,points):
                         movement=False
                         Xvelocity=0
                         yVelocity=0
                 pygame.display.update()
                 clock.tick(30)
-    #show Score
     def gameOver(points):
         playerText = "Score: "  + str(points)
         font = pygame.font.Font('freesansbold.ttf', 30)
@@ -182,13 +183,10 @@ class Main:
         score1Rect.center = (playerScoreX//2 , playerScoreY//2)
         screen.blit(game_over_pic,(0,0))
         screen.blit(score1, score1Rect)
-        
         keys = pygame.key.get_pressed()
-        #Quit
         if keys[K_ESCAPE]:
             pygame.quit()
             quit()
-        #Rematch
         if keys[K_SPACE]:
                 Main.play()
         pygame.display.update()
