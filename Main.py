@@ -45,9 +45,6 @@ def createStone(star,arr,points,level10):
                 return add_stone(k.stoneX,0,arr)
             else:
                 return add_stone(k.stoneX,k.stoneY,arr)
-
-                
-    
         if(abs(k.stoneX-star.star_x)<40 or abs(k.stoneY-star.star_y)<40):
             createStone(star,arr,points,level10) 
             created == True   
@@ -56,10 +53,7 @@ def add_stone(stoneX, stoneY, arr):
     k = Stone(stoneX, stoneY)  
     arr.append(k)
 
-
-
-class Main:
-    
+class Main: 
     def play():
             movement=True
             global points 
@@ -67,6 +61,14 @@ class Main:
             arr = []
             arr1 = []
             level10 = False
+            dir1 = False
+            x, y = 100, 400
+            black, white = (255, 255, 255), (0, 0, 0)
+            Xvelocity, yVelocity = 0, 0
+            stoneCounter=0
+            captured=False
+            run = True
+        
             pygame.init()  
             pygame.display.set_caption('flying spaceship')
             clock = pygame.time.Clock()
@@ -74,17 +76,14 @@ class Main:
             player = pygame.transform.scale(player1, (60, 40)).convert_alpha()
             boost1 = pygame.image.load(r'boosing.png').convert_alpha()
             boost = pygame.transform.scale(boost1, (60, 40)).convert_alpha()
-            dir1 = False
-            x, y = 100, 400
-            Xvelocity, yVelocity = 0, 0
-            #star1 = pygame.image.load(r'star.png').convert_alpha()
-            #star = pygame.transform.scale(star1,(30,30)).convert_alpha()
             stone = pygame.image.load(r'stone.png').convert_alpha()
             star = Star(arr)
-            stoneCounter=0
-            black, white = (255, 255, 255), (0, 0, 0)
-            captured=False
-            run = True
+            #star1 = pygame.image.load(r'star.png').convert_alpha()
+            #star = pygame.transform.scale(star1,(30,30)).convert_alpha()
+            
+            
+            
+            
             font = pygame.font.Font('freesansbold.ttf', 30)
             stoneBool=False
             while run:
@@ -96,8 +95,7 @@ class Main:
                 score1Rect.center = (playerScoreX//2 , playerScoreY//2)
 
                 # reduce speedOf spaceship
-                ##print(x, y," ",starX, starY , " ", captured , points)
-                Xvelocity=Xvelocity/1.05
+                Xvelocity=Xvelocity/1.05 
                 yVelocity=yVelocity/1.05
                 #main loop
                 for event in pygame.event.get():
@@ -135,7 +133,7 @@ class Main:
                     screen.blit(player, (x, y))
                 if(dir1):
                     screen.blit(boost, (x,y))
-                
+                #change gameModes
                 screen.blit(star.pic1,(star.star_x,star.star_y))
                 if abs(x-star.star_x)<20 and abs(y-star.star_y)<20:
                     captured=True
@@ -148,6 +146,8 @@ class Main:
                     level10f(arr1,points)
                 if(stoneBool):
                     createStone(star,arr,points,level10)
+                    
+                #check if the SpaceShip not on Stone
                 if(stoneBool):
                     for stone in arr:
                         pic = pygame.image.load(r"stone.png").convert_alpha()
@@ -157,25 +157,22 @@ class Main:
                         pic = pygame.image.load(r"stone.png").convert_alpha()
                         screen.blit(pic, (stone.stoneX, stone.stoneY))
                     
-                
+                #If the SpaceShip is on Star
                 if(captured):
                     star = Star(arr)
                     captured=False
                     points+=1
                 if(points == 18):
                     print("VICTORY")
-                if(stoneBool):
+                #Check if Crashed
+                if(stoneBool or level10):
                     if is_crashed(x,y,arr,points):
-                        movement=False
-                        Xvelocity=0
-                        yVelocity=0
-                if(level10):
-                    if is_crashed(x,y,arr1,points):
                         movement=False
                         Xvelocity=0
                         yVelocity=0
                 pygame.display.update()
                 clock.tick(30)
+    #show Score
     def gameOver(points):
         playerText = "Score: "  + str(points)
         font = pygame.font.Font('freesansbold.ttf', 30)
@@ -185,10 +182,13 @@ class Main:
         score1Rect.center = (playerScoreX//2 , playerScoreY//2)
         screen.blit(game_over_pic,(0,0))
         screen.blit(score1, score1Rect)
+        
         keys = pygame.key.get_pressed()
+        #Quit
         if keys[K_ESCAPE]:
             pygame.quit()
             quit()
+        #Rematch
         if keys[K_SPACE]:
                 Main.play()
         pygame.display.update()
